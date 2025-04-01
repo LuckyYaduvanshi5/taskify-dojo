@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Play, Pause, RotateCcw, Coffee } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 
 type TimerMode = 'focus' | 'break';
 
@@ -81,107 +82,120 @@ const PomodoroTimer = () => {
   }, [isActive, timeLeft, mode, focusDuration, breakDuration, toast]);
   
   return (
-    <div className="bg-card p-4 rounded-xl shadow-md animate-fade-in border border-border">
-      <h2 className="text-xl font-semibold mb-4 text-center">
-        {mode === 'focus' ? 'Focus Time' : 'Break Time'}
-      </h2>
-      
-      <div className="relative flex justify-center my-6">
-        <div className="w-36 h-36 rounded-full bg-muted flex items-center justify-center">
-          <Progress
-            value={progress}
-            className="w-36 h-36 rounded-full absolute"
-            indicatorClassName={cn(
-              "rounded-full transition-all",
-              mode === 'focus' ? "bg-primary/30" : "bg-cyan-500/30"
+    <Card className="w-full max-w-sm mx-auto bg-card/50 backdrop-blur-sm border-2 border-primary/20 rounded-xl shadow-lg overflow-hidden">
+      <div className="p-6 flex flex-col items-center">
+        <h2 className="text-xl font-semibold mb-6 text-center">
+          {mode === 'focus' ? 'Focus Time' : 'Break Time'}
+        </h2>
+        
+        <div className="relative flex justify-center mb-8">
+          <div className="w-48 h-48 rounded-full bg-card flex items-center justify-center relative">
+            <div className="absolute inset-0 rounded-full overflow-hidden">
+              <Progress
+                value={progress}
+                className="w-full h-full absolute rounded-full"
+                indicatorClassName={cn(
+                  "rounded-full transition-all",
+                  mode === 'focus' ? "bg-primary/20" : "bg-cyan-500/20"
+                )}
+              />
+            </div>
+            <div className="z-10 bg-background/80 backdrop-blur-sm rounded-full w-40 h-40 flex items-center justify-center">
+              <span className="text-4xl font-bold">
+                {formatTime(timeLeft)}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-center gap-3 mb-6 w-full">
+          <Button
+            onClick={toggleTimer}
+            variant="outline"
+            size="icon"
+            className={cn(
+              "w-14 h-14 rounded-full transition-all",
+              isActive 
+                ? "bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60" 
+                : "bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60"
             )}
-          />
-          <span className="text-3xl font-bold z-10">
-            {formatTime(timeLeft)}
-          </span>
+          >
+            {isActive ? <Pause size={24} /> : <Play size={24} />}
+          </Button>
+          
+          <Button
+            onClick={resetTimer}
+            variant="outline"
+            size="icon"
+            className="w-14 h-14 rounded-full bg-secondary/50 hover:bg-secondary/80"
+          >
+            <RotateCcw size={24} />
+          </Button>
+          
+          <Button
+            onClick={toggleMode}
+            variant="outline"
+            size="icon"
+            className={cn(
+              "w-14 h-14 rounded-full transition-all",
+              mode === 'break' 
+                ? "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground" 
+                : "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/40 dark:text-cyan-300 hover:bg-cyan-200 dark:hover:bg-cyan-900/60"
+            )}
+          >
+            <Coffee size={24} />
+          </Button>
         </div>
-      </div>
-      
-      <div className="flex justify-center gap-2 mb-4">
-        <Button
-          onClick={toggleTimer}
-          variant="outline"
-          size="icon"
-          className={cn(
-            "w-12 h-12 rounded-full",
-            isActive ? "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300" : 
-            "bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300"
-          )}
-        >
-          {isActive ? <Pause size={20} /> : <Play size={20} />}
-        </Button>
         
-        <Button
-          onClick={resetTimer}
-          variant="outline"
-          size="icon"
-          className="w-12 h-12 rounded-full"
-        >
-          <RotateCcw size={20} />
-        </Button>
-        
-        <Button
-          onClick={toggleMode}
-          variant="outline"
-          size="icon"
-          className={cn(
-            "w-12 h-12 rounded-full",
-            mode === 'break' 
-              ? "bg-primary/10 text-primary" 
-              : "bg-cyan-100 text-cyan-600 dark:bg-cyan-900 dark:text-cyan-300"
-          )}
-        >
-          <Coffee size={20} />
-        </Button>
-      </div>
-      
-      <div className="mt-4 space-y-3">
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span>Focus Duration: {focusDuration} min</span>
+        <div className="w-full space-y-6">
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <span className="font-medium">Focus Duration: {focusDuration} min</span>
+            </div>
+            <Slider
+              value={[focusDuration]}
+              min={5}
+              max={60}
+              step={5}
+              onValueChange={([value]) => {
+                setFocusDuration(value);
+                if (mode === 'focus' && !isActive) {
+                  setTimeLeft(value * 60);
+                }
+              }}
+              disabled={isActive}
+              className={cn(
+                "h-2", 
+                mode === 'focus' ? "bg-primary/20" : undefined
+              )}
+            />
           </div>
-          <Slider
-            value={[focusDuration]}
-            min={5}
-            max={60}
-            step={5}
-            onValueChange={([value]) => {
-              setFocusDuration(value);
-              if (mode === 'focus' && !isActive) {
-                setTimeLeft(value * 60);
-              }
-            }}
-            disabled={isActive}
-            className="my-2"
-          />
-        </div>
-        
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span>Break Duration: {breakDuration} min</span>
+          
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <span className="font-medium">Break Duration: {breakDuration} min</span>
+            </div>
+            <Slider
+              value={[breakDuration]}
+              min={1}
+              max={30}
+              step={1}
+              onValueChange={([value]) => {
+                setBreakDuration(value);
+                if (mode === 'break' && !isActive) {
+                  setTimeLeft(value * 60);
+                }
+              }}
+              disabled={isActive}
+              className={cn(
+                "h-2",
+                mode === 'break' ? "bg-cyan-500/20" : undefined
+              )}
+            />
           </div>
-          <Slider
-            value={[breakDuration]}
-            min={1}
-            max={30}
-            step={1}
-            onValueChange={([value]) => {
-              setBreakDuration(value);
-              if (mode === 'break' && !isActive) {
-                setTimeLeft(value * 60);
-              }
-            }}
-            disabled={isActive}
-            className="my-2"
-          />
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
