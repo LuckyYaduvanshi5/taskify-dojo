@@ -5,7 +5,7 @@ import { useTask } from '@/contexts/TaskContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Sun, Moon, Monitor, Trash2, AlertTriangle } from 'lucide-react';
+import { Sun, Moon, Monitor, Trash2, AlertTriangle, ExternalLink } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -139,6 +139,24 @@ const Settings = () => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+        </div>
+        
+        {/* Credits Section */}
+        <div className="space-y-3 pt-4 border-t">
+          <h2 className="text-lg font-medium">Credits</h2>
+          <div className="bg-card rounded-lg p-4">
+            <div className="flex flex-col space-y-2">
+              <p className="font-medium">Developed by Lucky Yaduvanshi</p>
+              <a 
+                href="https://miniai.online" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary flex items-center hover:underline"
+              >
+                miniai.online <ExternalLink size={14} className="ml-1" />
+              </a>
+            </div>
+          </div>
         </div>
         
         {/* App Info */}
