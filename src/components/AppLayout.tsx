@@ -1,10 +1,11 @@
 
 import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Home, Settings, Plus } from 'lucide-react';
+import { Home, Settings, Plus, CheckCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import TaskForm from './TaskForm';
+import { motion } from 'framer-motion';
 
 const AppLayout = () => {
   const location = useLocation();
@@ -22,10 +23,10 @@ const AppLayout = () => {
   }, []);
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Header */}
       <header className={cn(
-        "w-full py-4 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-50 transition-all duration-200 bg-background",
+        "w-full py-4 px-6 flex items-center justify-between fixed top-0 left-0 right-0 z-50 transition-all duration-200 bg-background/90 backdrop-blur-sm",
         scrolled && "shadow-sm"
       )}>
         <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-indigo-500 bg-clip-text text-transparent">
@@ -39,17 +40,22 @@ const AppLayout = () => {
       </main>
       
       {/* Floating action button */}
-      <div className="fixed right-6 bottom-20 z-10">
+      <motion.div 
+        className="fixed right-6 bottom-20 z-10"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
         <Button 
           onClick={() => setIsTaskFormOpen(true)}
           className="h-14 w-14 rounded-full flex items-center justify-center shadow-lg bg-primary hover:bg-primary/90"
         >
           <Plus size={24} />
         </Button>
-      </div>
+      </motion.div>
       
       {/* Bottom navigation */}
-      <footer className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t flex items-center justify-around z-50">
+      <footer className="fixed bottom-0 left-0 right-0 h-16 bg-background/90 backdrop-blur-sm border-t flex items-center justify-around z-50">
         <NavLink 
           to="/" 
           className={({ isActive }) => cn(
